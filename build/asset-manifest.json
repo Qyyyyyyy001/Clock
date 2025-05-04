@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Clock/static/css/main.9f088a99.css",
+    "main.js": "/Clock/static/js/main.17321b68.js",
+    "index.html": "/Clock/index.html",
+    "main.9f088a99.css.map": "/Clock/static/css/main.9f088a99.css.map",
+    "main.17321b68.js.map": "/Clock/static/js/main.17321b68.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9f088a99.css",
+    "static/js/main.17321b68.js"
+  ]
+}
