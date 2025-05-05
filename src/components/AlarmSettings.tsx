@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -45,6 +45,21 @@ const AlarmSettings: React.FC = () => {
   const [alarmTime, setAlarmTime] = useState<string>('');
   const [isAlarmSet, setIsAlarmSet] = useState<boolean>(false);
   const [alarmTimeout, setAlarmTimeout] = useState<NodeJS.Timeout | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // 创建音频元素
+    audioRef.current = new Audio('/Clock/sounds/alarm.mp3');
+    audioRef.current.loop = true;
+  }, []);
+
+  const stopAlarm = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    setIsAlarmSet(false);
+  };
 
   const handleAlarmSet = () => {
     if (isAlarmSet) {
@@ -53,7 +68,7 @@ const AlarmSettings: React.FC = () => {
         clearTimeout(alarmTimeout);
         setAlarmTimeout(null);
       }
-      setIsAlarmSet(false);
+      stopAlarm();
     } else {
       // 设置闹钟
       const [hours, minutes] = alarmTime.split(':');
@@ -68,8 +83,12 @@ const AlarmSettings: React.FC = () => {
       }
 
       const timeout = setTimeout(() => {
-        alert('闹钟响了！');
-        setIsAlarmSet(false);
+        if (audioRef.current) {
+          audioRef.current.play().catch(error => {
+            console.error('播放音频失败:', error);
+            alert('闹钟响了！');
+          });
+        }
       }, alarmDate.getTime() - now.getTime());
 
       setAlarmTimeout(timeout);
@@ -81,6 +100,9 @@ const AlarmSettings: React.FC = () => {
     return () => {
       if (alarmTimeout) {
         clearTimeout(alarmTimeout);
+      }
+      if (audioRef.current) {
+        audioRef.current.pause();
       }
     };
   }, [alarmTimeout]);
